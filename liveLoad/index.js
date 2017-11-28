@@ -18,3 +18,11 @@ d3.csv('./foodImports_AE.csv', function(dataIn){
     //do your first drawing here
 
 });
+
+reloadData('AF');
+
+function reloadData(inputName){
+    d3.csv('./foodimports_' + inputName + '.csv', function(error, newData){
+        console.log(newData);
+    })
+}

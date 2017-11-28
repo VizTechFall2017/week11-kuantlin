@@ -15,6 +15,12 @@ var scaleX = d3.scaleBand().rangeRound([0, 600]).padding(0.1);
 var scaleY = d3.scaleLinear().range([400, 0]);
 
 
+var sortOrder = "alphabetical";
+
+var currentYear = '1987';
+
+
+
 //import the data from the .csv file
 d3.csv('./countryData_topten.csv', function(dataIn){
 
@@ -23,6 +29,14 @@ d3.csv('./countryData_topten.csv', function(dataIn){
         .entries(dataIn);
 
     var loadData = nestedData.filter(function(d){return d.key == '1987'})[0].values;
+
+    console.log(loadData);
+
+    loadData.sort(function(a,b){
+        return b.totalPop-a.totalPop;  //only sort the order of the data, not change the value of the data, not do the subtraction operation;
+    });
+
+    console.log(loadData);
 
     // Add the x Axis
     svg.append("g")
@@ -34,21 +48,21 @@ d3.csv('./countryData_topten.csv', function(dataIn){
         .attr('class', 'yaxis')
         .call(d3.axisLeft(scaleY));
 
-/*
-    svg.append('text')
-        .text('Weekly income by age and gender')
-        .attr('transform','translate(300, -20)')
-        .style('text-anchor','middle');
+    /*
+        svg.append('text')
+            .text('Weekly income by age and gender')
+            .attr('transform','translate(300, -20)')
+            .style('text-anchor','middle');
 
-    svg.append('text')
-        .text('age group')
-        .attr('transform','translate(260, 440)');
+        svg.append('text')
+            .text('age group')
+            .attr('transform','translate(260, 440)');
 
-    svg.append('text')
-        .text('weekly income')
-        .attr('transform', 'translate(-50,250)rotate(270)');
+        svg.append('text')
+            .text('weekly income')
+            .attr('transform', 'translate(-50,250)rotate(270)');
 
-        */
+            */
 
     //bind the data to the d3 selection, but don't draw it yet
     //svg.selectAll('rect')
@@ -125,8 +139,28 @@ function drawPoints(pointData){
 }
 
 
+
+
+
 function updateData(selectedYear){
-    return nestedData.filter(function(d){return d.key == selectedYear})[0].values;
+    /* var newData = nestedData.filter(function(d){return d.key == selectedYear})[0].values;
+
+     return newData.sort(function(a,b){
+         return b.totalPop-a.totalPop;
+ });*/
+
+    if (sortOrder == 'alphabetical'){
+        return nestedData.filter(function(d){return d.key == selectedYear})[0].values.sort(function(a,b){
+            return a.fullname.localeCompare(b.fullname);
+        });
+    }
+
+    if (sortOrder == 'descending'){
+        return nestedData.filter(function(d){return d.key == selectedYear})[0].values.sort(function(a,b){
+            return b.totalPop-a.totalPop;
+        });
+    }
+
 }
 
 
@@ -134,6 +168,14 @@ function updateData(selectedYear){
 function sliderMoved(value){
 
     newData = updateData(value);
+    currentYear = value;
     drawPoints(newData);
 
+}
+
+function radioChange(value){
+    console.log(value);
+    sortOrder = value;
+    newData = updateData(currentYear);
+    drawPoints(newData);
 }

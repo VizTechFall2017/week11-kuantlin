@@ -66,7 +66,7 @@ d3.csv('./daca_timeline.csv', function(dataIn){
 function wrap(text, wordList, width) {
     text.each(function () {
         var text = d3.select(this),
-            words = wordList.split(/\s+/).reverse(),
+            words = text.datum().text.split(/\s+/).reverse(),
             word,
             line = [],
             lineNumber = 0,
@@ -78,6 +78,7 @@ function wrap(text, wordList, width) {
                 .append("tspan")
                 .attr("x", x)
                 .attr("y", y)
+                .attr("glass",'textbox')
                 .attr("dy", dy + "em");
 
         while (word = words.pop()) {
